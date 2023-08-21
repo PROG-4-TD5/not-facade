@@ -1,6 +1,7 @@
 package com.example.prog4.service;
 
 import com.example.prog4.model.EmployeeFilter;
+import com.example.prog4.model.exception.NotFoundException;
 import com.example.prog4.repository.base.EmployeeRepository;
 import com.example.prog4.repository.base.dao.EmployeeManagerDao;
 import com.example.prog4.repository.base.entity.Employee;
@@ -22,15 +23,13 @@ public class EmployeeService {
 
   public Employee getOne(String id) {
     Optional<Employee> base = baseRepository.findById(id);
+    if (base.isEmpty()) {
+      throw new NotFoundException("Employee.Id=" + id + " was not found.");
+    }
+    Employee result = base.get();
     Optional<com.example.prog4.repository.cnaps.entity.Employee> cnaps =
         cnapsEmployeeRepository.findByEndToEndId(id);
-    Employee result = null;
-    if (base.isPresent()) {
-      result = base.get();
-      if (cnaps.isPresent()) {
-        result.setCnaps(cnaps.get().getNumber());
-      }
-    }
+    cnaps.ifPresent(employee -> result.setCnaps(employee.getNumber()));
     return result;
   }
 
