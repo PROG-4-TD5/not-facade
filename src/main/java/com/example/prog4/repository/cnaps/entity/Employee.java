@@ -54,4 +54,5 @@ public class Employee implements Serializable {
   @ColumnTransformer(read = "CAST(csp AS varchar)", write = "CAST(? AS csp)")
   private Csp csp;
   private String endToEndId;
+  private String number;
 }
